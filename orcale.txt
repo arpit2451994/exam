@@ -1,0 +1,117 @@
+	oracle middleware 
+oracle 
+oracel provide DBMS  not database itself
+vendor of Database in market find at least 15?
+RDBMS:-
+maintain data in the table called rdbms that will dynamically increase or decrease
+interaction will possible with sql so its easy to retrieve the data
+access using qurey also called sql 
+88846-79900 anthony
+
+
+
+
+os = oracle instance + oracle db 
+HOst based system:-
+client - server system :-
+n-tier arch:-
+sql is  declarative language, known as unified language means commaon for all the rdbms not the procedural language.
+PL-SQL is procedural language.
+sql keywords are not case sensitive as well as the statement also not case sensitive.
+***the value that you are giving to the query is case sensitive  so you should give the as it is present in the db***
+***Date should be in single quotes, format is 'DD-MM-YYYY'
+every sql statement should end with semi_colon;
+ANSI standard sql: comman lang to all vendor
+sql* isqlplus
+host-range:- address of the server, cryptic name of the server
+
+
+commands:-
+set pagesize 80:- for the proper size of the page
+select * from dept;
+cl scr:- clearing screen
+For a fresh line :- put a dot and enter
+/:- this is for the last executed qurey in the memory
+
+
+DQL(data query language) , DRL  (data retrivl language ) 	---- SELECT
+DML (data manupulate language)                                 	---- INSERT, UPDATE, DELETE, MERGE 
+DDL (data Defination language)			  	---- CREATE, ALTER, DROP, TRUNCATE, RENAME
+DCL (data control )				  	---- GRANT, REVOKE
+TCL (transaction control lanuage)                                	---- COMMIT, ROLLBACK
+
+properties :-
+
+DQL(data query language) :- to retrieve data only , does not modify the data
+capabilities:- it can select, it can project
+	eg. select * from emp;
+	      it is projecting the things what are the specified after the select statement
+                      projection is achieved on the basis of what you are going to write after the select statement 
+	      after the select keyword you only eliglible to select columns not rows......	
+	      we always project the column in the table
+we can also have derived column in the select clause
+eg:-   	select SAL, SAL*12 from emp;
+        	selct SAL, SAL*3 from emp;
+	selct SAL, SAL*6from emp;
+	selct SAL, SAL from emp;
+alias:-	another name for the column 
+eg:- 	selct SAL, SAL*3 quat_sal, SAL*6 half_sal, SAL*12 annl_sal from emp;	
+			            or 
+	selct SAL, SAL*3 AS quat_sal, SAL*6 AS half_sal, SAL*12 AS "annl sal" from emp;	
+	alias should be complete 1 word not a 2 different word     
+	if you want to give the space than give the name in the double quotes
+Hike sal
+	select SAL, SAL+100 hiked_sal , SAL+100*12 from emp;
+Predefind function or aggregate function or multiple row funtion or group funtion:-
+	sum-
+	selct sum(SAL), MIN(SAL), MAX(SAL), COUNT(SAL) , AVG(SAL)from emp;
+
+Latest string 
+	select ' GOOD MORNING ' from emp;
+	it will appear as same asnumber of rows are present
+DUAL 	
+	select ' GOOD MORNING ' from dual;
+	one time 
+	select sysdate from dual;
+	single date for testing 
+	select ENAME || 'works AS' || JOB from emp;
+||	concatenation operator for sql 
+
+Distinct	unique not duplicate 
+eg:-	selct DISTINCT deptno form emp;
+	it gives the unique value from the table or non duplicate values
+rules	
+	distinct keyword should be used immediately after the select keyword
+	it should not be used elsewhere in the remaining query 
+	when you use distinct after the select keyword than it makes uniqe all the coloumn automatically
+eg:-	select DISTINCT DEPTNO , JOB fromp emp order by 1,2;
+
+where cluase: it filter the desired output based on the condition which specify
+eg 	 select * from emp deptno =10; < > >= <= <> !=
+	write a query that gives the info of 10 as well as 20 
+	 select * from emp where deptno =10 AND deptno =20;  wrong 
+	select * from emp where deptno =10 OR deptno =20;
+	WAQ
+	deptno=10 and sal>=1000 and all them are either salesaman or clerk
+	select * from emp where deptno=10 or sal >1000 or job=cleark AND job=salesman;wrong done by me
+
+	select * from emp where deptno=10 AND sal >1000 AND ( job='cleark' OR  job='salesman' );
+	
+comparison operator:-
+	BETWEEN , AND
+	IN
+eg:-	select * form emp where sal between 1000 and 3000;
+	select * form emp where sal between 1000 OR 3000; check it
+	it will give the records that are not in 1000,1500,3000,2000
+eg:-	select * form emp where sal NOT IN (1000,1500,3000,2000);
+	
+eg:- 	select sal , comm , sal+comm from emp;
+	it does not include the null values and dont include in the final output
+ 
+eg:-	slect sal,comm ,sal +NVL(comm,0) from emp;
+	if commission is not there than it puts the 0 and include in the final output
+
+**** MINIMUM YOU NEED THE "SELECT" AND "FROM" TO COMPLETE THE QUERY****
+
+	
+

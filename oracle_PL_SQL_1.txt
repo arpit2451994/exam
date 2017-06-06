@@ -1,0 +1,431 @@
+CURSOR:-
+SQL%FOUND
+SQL%NOTFOUND
+SQL%ROWCOUNT
+
+	declare 
+	begin
+	update emp set sal=sal+1 where deptno ='&DEPTNO';
+	if sql%found then
+	dbms_output.put_line('update done');
+	elsif sql%notfound then
+	dbms.output.put_line('update not done');
+	--here we are updating multiple records for this no req. of explicit cursor
+	-- for the select stateemtne we need the explicit cursor for fetching mulitple records through pl-sql
+	end if ;
+	end;
+
+
+
+	declare
+	x number; 
+	begiin
+	update emp set sal=sal+1 where deptno =10;
+	if sql%found then
+	x := sql%rowcount;
+	dbms_output.put_line(x || "row update done");
+	elsif sql%notfound then
+	dbms.output.put_line("update not done");
+	--here we are updating multiple records for this no req. of explicit cursor
+	-- for the select stateemtne we need the explicit cursors	
+	end ;
+
+
+implicit cursor is the memory are for the all DML statement and also for the implicit cursor
+
+03)
+declare 
+v_ename emp.ename%type
+begin
+select ename into v_ename from where empno=7369;
+dbms_output.put_line(v_name);
+end;
+
+04)
+declare 
+v_ename emp.ename%type;
+begin
+select ename into v_ename from emp where deptno=10;
+dbms_output.put_line(v_ename);
+end;
+for this type of programme we have to make the explicit cursors
+
+
+
+05)
+***********Explicit cursor*************
+declare 
+cursor c1 is select ename from emp where deptno='&deptno'; 
+-- naming the memory area
+-- open fetch and 
+v_ename emp.ename%type;
+x number;
+begin
+open c1; 
+-- it will fo back to cursor defination and identified the record which has to process,this record set called active set.
+
+loop -- loop for showing more than one record
+fetch c1 into v_ename;
+x := c1%rowcount;
+if c1%notfound then
+dbms_output.put_line('NO RECORDS');
+end if;
+exit when c1%notfound;
+dbms_output.put_line(v_ename);
+end loop;
+dbms_output.put_line(x||'number of rows');
+close c1;
+end;
+
+
+********fetching more than one record into the cursors, and defining the variable according to the column type**********
+06)
+declare 
+cursor c1 is select ename, deptno from emp where sal>2500;
+ -- naming the memory area
+-- open fetch and 
+v_ename emp.ename%type;
+v_deptno emp.deptno%type;
+
+begin
+open c1; 
+-- it will go back to cursor defination and identified the record which has to process,this record set called active set.
+
+loop
+-- loop for showing more than one record 
+fetch c1 into v_ename, v_deptno;	
+--fetch c1 into v_deptno;
+exit when c1%notfound;
+dbms_output.put_line(v_ename || ' '  || v_deptno);
+end loop;
+
+close c1;
+end;
+********fetching more than one record into the cursors, and defining the variable according to the cursor type**********
+**once you close we can start cursor again, but it will restart again from the begining    
+  
+07)
+
+declare 
+cursor c1 is select ename, sal,job,deptno from emp where sal>2500;
+ -- naming the memory area
+-- open fetch and 
+v_rec c1%rowtype;
+
+begin	
+open c1; 
+-- it will fo back to cursor defination and identified the record which has to process,this record set called active set.
+
+loop 
+-- loop for showing more than one record
+fetch c1. into v_rec;	
+
+exit when c1%notfound;
+dbms_output.put_line(v_rec.ename || ' '  ||v_rec.sal||' ' || v_rec.job || ' ' || v_rec.deptno);
+end loop;
+
+close c1;
+end;
+
+**********fetching more than one record into the cursors, and defining the variable according to the column type with FOR LOOP**********
+
+08)
+declare 
+cursor c1 is select ename, sal,job,deptno from emp where sal>2500;
+ -- naming the memory area
+-- open and fetch through loop
+
+begin
+open c1; 
+-- it will fo back to cursor defination and identified the record which has to process,this record set called active set.
+
+for i in c1 loop
+-- it will fetch all the infomation in  i itself
+
+dbms_output.put_line(i.ename || ' '  ||i.sal||' ' || i.job || ' ' || i.deptno);
+end loop;
+
+close c1;
+end;
+
+09) without writing the cursor  directly fetching the multiple data ..... and dml devlop the implicit cursor itself so not to worry about the cursor
+
+begin
+ 
+-- it will fo back to cursor defination and identified the record which has to process,this record set called active set.
+-- for loop cursor declare,open and fetch implicitely
+
+for i in (select E.ename,E.sal,E.job,E.deptno,D.dname from emp E join dept D on( E.deptno =D.deptno) AND sal>2500) loop
+-- it will fetch all the infomation in  i itself
+
+dbms_output.put_line(i.ename || ' '  ||i.sal||' ' || i.job || ' ' || i.deptno || ' ' || i.dname);
+end loop;
+
+close c1;
+end;
+
+********* parametrized cursor ************
+
+
+
+
+declare 
+
+cursor c1 (p_deptno number) is select deptno,ename from emp where deptno = p_deptno;
+
+v_rec c1%rowtype;
+
+begin
+
+open c1(10);
+loop
+fetch c1 into v_rec;
+exit when c1%notfound;
+dbms_output.put_line(v_rec.deptno || '  ' || v_rec.ename );
+end loop;
+
+close c1;
+
+open c1(20);
+loop
+fetch c1 into v_rec;
+exit when c1%notfound;
+dbms_output.put_line(v_rec.deptno || ' ' || v_rec.ename);
+end loop;
+close c1;
+
+end ;
+/
+
+
+**** update the sal using cursor and deptno should be 10 and passing the parameter in the cursor*********
+**BY DEEPAK**
+
+declare 
+
+cursor c1 (p_deptno number) is select deptno,sal from emp where deptno = p_deptno;
+v_rec c1%rowtype;
+
+begin
+open c1(10);
+
+loop
+fetch c1 into v_rec;
+v_rec.sal := v_rec.sal+1;
+exit when c1%notfound;
+dbms_output.put_line(v_rec.sal);
+end loop;
+
+close c1;
+commit;
+end ;
+/
+
+*** AJEET KUMAR****
+
+declare 
+cursor c1 is select sal from emp where deptno = 10;
+v_sal emp%saltype;
+begin
+open c1;
+loop
+fetch c1 into v_sal;
+exit when c1%notfound;
+update emp set sal=sal+1 where deptno=10;
+end loop;
+close c1;
+commit;
+end ;
+/
+
+-- it will updating the recordds 3 times
+
+declare 
+cursor c1 is select sal from emp where deptno = 10
+FOR UPDATE OF SAL NOWAIT;
+v_sal emp%saltype;
+begin
+open c1;
+loop
+fetch c1 into v_sal;
+exit when c1%notfound;
+update emp set sal=sal+1 where deptno=10;
+WHERE CURRENT OF C1;
+end loop;
+ close c1;
+commit;
+end ;
+/
+
+
+
+			*********EXCEPTION********
+exception is nothing more, it is just an identifier
+1)predefined                            2) user defined
+
+
+
+declare
+v_ename emp.ename%type;
+begin 
+select ename into v_ename from emp where empno=1233;
+exception 
+when no_data_found then
+dbms_output.put_line('empno does not exist in the db');
+end;
+/
+
+
+declare
+v_ename emp.ename%type;
+ x number :=100;
+begin 
+select  ename into v_ename from emp where empno=7369;
+x := x/0;
+exception 
+when no_data_found then
+dbms_output.put_line('empno does not exist in the db');
+when too_many_rows then
+dbms_output.put_line('implement cursor');
+when zero_divide then
+dbms_output.put_line('number cannot divided by 0');
+when DUP_VAL_ON_INDEX then
+dbms_output.put_line('duplicate value found');
+end;
+/
+
+
+
+
+declare
+v_ename emp.ename%type;
+ x number :=100;
+begin 
+select ename into v_ename from emp where deptno = 10;
+x := x/0;
+exception 
+when no_data_found or too_many_rows or zero_divide then
+dbms_output.put_line('empno does not exist in the db');
+/*when too_many_rows then
+dbms_output.put_line('implement cursor');
+when zero_divide then
+dbms_output.put_line('number cannot divided by 0');*/
+when other then
+dbms_output.put_line('generic message');
+end;
+/
+
+
+
+***********making of the exception********		
+
+
+declare 
+e_invalid_department EXCEPTION;
+BEGIN
+update dept SET dname = 'software' where deptno='&deptno';
+if sql%notfound then 
+raise e_invalid_department;
+end if;
+commit;
+exception
+when e_invalid_department then 
+dbms_output.put_line('no such department id klau');
+end;
+/
+
+
+
+create table  error_master
+(
+err_seq number , err_codes varchar2(20), err_messages varchar2(200) );
+
+
+drop sequence s1;
+create sequence s1;
+
+declare 
+v_sal emp.sal%type;
+begin
+select sal into v_sal from emp where deptno = 10;
+exception
+when too_many_rows then
+
+x number(4);
+y varchar2(200);
+
+v_sal emp.sal%type;
+begin
+select sal into v_sal from emp where deptno =10;
+exception
+when too_many_rows then
+
+x := sqlcode;
+y := sqlerrm;
+
+insert into error_master values (s1.nextval , x, y );
+commit;
+end;
+'
+ select  ename,job from emp where hiredate between '01-jan-1980' and '01-jun-1980' or hiredate between
+'01-jan-1981' and '01-jun-1981';
+
+
+DECLARE --outer block
+var_num2 NUMBER := 5;
+BEGIN
+	DECLARE --inner block
+	var_num1 NUMBER := 10;
+	BEGIN
+	DBMS_OUTPUT.PUT_LINE('Value for var_num1:' ||var_num1);
+	--Can outer block variable (var_num1) be printed here.If Yes,Print the same.
+	END;
+DBMS_OUTPUT.PUT_LINE('Value for var_num1:' ||var_num1);
+--Can inner block variable(var_num1) be printed here.If Yes,Print the same.
+END;
+
+
+Declare 
+cursor c1 is select empno,ename,sal from emp where deptno='&deptno';
+
+v_empno emp.empno%type;
+v_ename emp.ename%type;  
+v_sal emp.sal%type;
+
+begin 
+open c1;
+loop
+fetch c1 into v_empno ,v_ename ,v_sal ;
+exit when c1%notfound;
+dbms_output.put_line(v_empno ||' ' || v_ename|| ' ' || v_sal);
+end loop ;
+close c1;
+end;
+
+
+declare 
+v_sal emp.sal%type;
+begin 
+select min(sal) into v_sal from emp where deptno='&deptno';
+v_sal :=  v_sal + 5000;
+dbms_output.put_line(v_sal);
+end;
+
+
+declare 
+cursor c1 is select ename, deptno from emp where sal>2500;
+
+v_ename emp.ename%type;
+v_deptno emp.deptno%type;
+
+begin
+open c1; 
+
+loop
+fetch c1 into v_ename, v_deptno;	
+exit when c1%notfound;
+dbms_output.put_line(v_ename || ' '  || v_deptno);
+end loop;
+
+close c1;
+end;

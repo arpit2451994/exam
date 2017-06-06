@@ -1,0 +1,52 @@
+
+index :
+	unique index and non-unique index
+	for filtering the records we need the index
+	create index emp_sal_idx on emp(sal);
+	desc user_indexes;
+	select name,type from user_indexes;
+	select * from emp_sal_idx;
+unique index:-
+	create unique index emp_sal_idx on emp(sal);
+	:- it doesnt comprises with the uniqeness of the column
+	:- when you have the duplicate salary in the index than it will not creating the new index
+	select index_name, index_type from user_indexes;
+	create bitmap index emp_deptno_btm on emp(deptno);	
+	select Index_name, Index_type from user_indexes;
+
+	optimizer:-
+		
+	function based index:-
+	select * from emp where UPPER(ename) ='SCOTT';
+	INDEX without the function is not that useful so create always with the function
+	drop index emp_ename_idx;
+	create  index emp_ename_idx on upper()emp(sal);	
+
+
+DCL
+	Data control language:
+	super user and systeme user 
+	
+	creating the user
+	grant select on emp to u1;
+	revoke select on emp from u1;
+
+	grant update on emp to u1;
+	 
+ 
+UNION OPERATOR
+	select * from dept;
+	union all
+	select * from dept_new;
+
+
+
+Data file :-containg the data
+control file:- information about control on data , control the entire db
+redo file:- all the transaction will be there in redo file
+	
+
+
+
+
+	

@@ -1,0 +1,443 @@
+1) PL-SQL does not support DDL(create,alter,drop,rename) & DCL(grant,revoke,commit) in the excutable section for this have to use dynamicSQL;
+    if we run the DDL and DCL may be it will commit the transaction in between.
+2) Portability is there
+3)	
+	DECLARE
+	----- variable,curosr,types,exceptionsK number(4);
+	BEGIN
+	------select,Dml,tcl.
+	EXCEPTION(optional)
+
+	END; 
+3) begin to end call executable section. so write the query in this.
+4) if you not declare a variable in declare section than you can not able to use in the executable section.
+5) BLock type
+	3 types of block are there:-
+	Anonymous.:-it do not accept the parameters;
+		Named
+	procedure
+	function
+	block dig availible in PDF 03
+sample programme
+
+	DECLARE
+	
+	x number(4);
+	y number(4);
+	total number(4);
+	
+	BEGIN
+	x := 100;
+	y := 100;
+	total := x+y;
+
+	END;
+Sample programme 2 	
+	DECLARE
+	
+	x number(4);
+	y number(4);
+	total number(3);
+	
+	BEGIN
+	x := 100;
+	y := 100;
+	total := x+y;
+	dbms_output.put_line('the sum of x and y is' || x|| ' ' || y || 'total');
+	END;
+Sample programme 2 	
+	DECLARE
+	
+	x number(4) := 100,200;
+	y number(4) := 100;
+	total number(3);
+	
+	BEGIN
+	x :=x+10;
+	total := x+y;
+	dbms_output.put_line('the sum of x and y is' || x|| ' ' || y || 'total' ||total);
+	END;
+
+variable:-
+	scalar:-can hold only one value  x number(4) := 100;
+	composite:- can hold multiple vaules x number(4) := 100,200,300;
+
+Datatype with %type
+
+	DECLARE
+	V_sal emp.sal%type;
+	BEGIN
+	select sal INTO V_sal from emp where ename='SCOTT';
+	dbms_output.put_line(V_sal);
+	END;
+
+*** dont fetch the more than one record into one select stateme*********
+	
+
+	DECLARE
+	V_empno number;
+	V_ename varchar2(10);
+	V_sal number;
+	V_deptno number;
+	
+	BEGIN
+
+	select empno,ename,sal,deptno INTO V_empno,V_ename,V_sal,V_deptno from emp where ename='SCOTT';
+
+	dbms_output.put_line( V_empno || V_ename || V_sal || V_deptno );
+
+	END;
+****
+%Attribute TABLE TYPE0
+
+	DECLARE
+	V_empno emp.empno%type;                 // go to current table and pick up the current data type and use it
+	V_ename emp.ename%type;
+	V_sal  emp.sal%type;
+	V_deptno emp.deptno%type;
+	
+	BEGIN
+	select empno,ename,sal,deptno INTO V_empno,V_ename,V_sal,V_deptno from emp where ename='SCOTT';
+	dbms_output.put_line( V_empno ||' ' || V_ename ||' ' || V_sal ||' ' || V_deptno );
+	END;
+	
+2)
+	DECLARE
+	V_REC EMP%ROWTYPE;
+	BEGIN
+	select * INTO V_REC from emp where ename='scott';
+	dbms_output.put_line( V_REC.empno || V_REC.ename || V_REC.deptno || V_REC.sal );
+	END;
+3) 
+	insert a record into dept;
+ 	DECLARE
+	BEGIN
+	INSERT into dept values(50,'abc','xyz');
+	commit; // you should have to commit for the updation of the data
+	END;
+
+4) 		ed
+
+5) 	DECLARE 
+	V_REC emp%rowtype;
+	BEGIN
+	select * into V_REC from emp where ENAME='SCOTT';
+	dbms_output.put_line(V_REC);
+	END;
+
+
+
+6) for stroring the specific number of coloumn according to req WE CREATE THE DATA TYPE HERE.
+ 
+ DECLARE
+
+ TYPE EMP_REC_TYPE IS RECORD (
+ V_EMPNO EMP.EMPNO%TYPE,
+ V_ENAME EMP.ENAME%TYPE,
+ V_DEPTNO EMP.DEPTNO%TYPE
+ );
+
+ V_REC  EMP_REC_TYPE;
+
+ BEGIN
+
+ SELECT EMPNO,ENAME,DEPTNO into V_REC from emp where ENAME='SCOTT';
+
+ DBMS_OUTPUT.PUT_LINE(V_REC.V_EMPNO||V_REC.V_ENAME||V_REC.V_DEPTNO);
+
+ END;
+
+
+
+
+
+SET SERVEROUTPOUT 
+
+
+pl-sql table data type
+
+declare
+type emp_table_type is table of
+ emp.ename%type index by binary_integer;
+V_ename_table  emp_table_type;
+begin
+V_ename_table(1) := 'SCOTT';
+V_ename_table(2) := 'MILLER';
+V_ename_table(3) := 'ADAMS';
+
+V_ename_table(4) := 'ADAMS';
+
+V_ename_table(5) := 'ADAMS';
+
+V_ename_table(6) := 'ADAMS';
+
+V_ename_table(7) := 'ADAMS';
+
+dbms_output.put_line(V_ename_table(1) || ' ' || V_ename_table(2) || ' ' || V_ename_table(3) );
+end;
+		
+
+
+
+declare
+x number := 0 ;
+begin
+	declare 
+	x number:=100;
+	begin
+	dbms_output.put_line(x);
+	end;
+dbms_output.put_line(x);
+end;
+\
+
+
+SQL> declare
+  2  x number := 0 ;
+  3  begin
+  4  
+  5   declare 
+  6   x number:=100;
+  7   begin
+  8   dbms_output.put_line(x);
+  9   end;
+ 10  dbms_output.put_line(x);
+ 11  end;
+ 12  /
+100
+0
+
+
+
+PL/SQL procedure successfully completed.
+
+SQL> declare
+  2  x number := 0 ;
+  3  begin
+  4  
+  5   declare 
+  6   x number:=100;
+  7   begin
+  8   dbms_output.put_line(x);
+  9   end;
+ 10  --dbms_output.put_line(x);
+ 11  end;
+ 12  /
+100
+
+PL/SQL procedure successfully completed.
+
+SQL> declare
+  2  x number := 0 ;
+  3  begin
+  4  
+  5   declare 
+  6  -- x number:=100;
+  7   begin
+  8   dbms_output.put_line(x);
+  9   end;
+ 10  --dbms_output.put_line(x);
+ 11  end;
+ 12  /
+0
+***inner block value can not be reffered to the outer block and the outer block value will be reffered to the inner block***
+
+
+
+declare
+v_sal emp.sal%type; 
+begin
+select sal into v_sal from emp where empno= '&empno';
+
+dbms_output.put_line(v_sal);
+if v_sal < 2000 then
+v_sal := v_sal+20;  
+end if ;
+v_sal := v_sal + 40;
+dbms_output.put_line(v_sal);
+--we are incremen in the programme itself not in the database 
+end;
+
+sample programme for if-else
+SQL> declare
+  2  v_sal emp.sal%type; 
+  3  begin
+  4  select sal into v_sal from emp where empno= '&empno';
+  5  
+  6  dbms_output.put_line(v_sal);
+  7  if v_sal < 2000 then
+  8  v_sal := v_sal+20;  
+  9  end if;
+ 10  dbms_output.put_line(v_sal);
+ 11  --we are incremen in the programme itself not in the database 
+ 12  end;
+ 13  /
+Enter value for empno: 7900
+950
+970
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> declare
+  2  v_sal emp.sal%type; 
+  3  begin
+  4  select sal into v_sal from emp where empno= '&empno';
+  5  
+  6  dbms_output.put_line(v_sal);
+  7  if v_sal < 2000 then
+  8  v_sal := v_sal+20;  
+  9  end if;
+ 10  v_sal := v_sal + 40;
+ 11  dbms_output.put_line(v_sal);
+ 12  --we are incremen in the programme itself not in the database 
+ 13  end;
+ 14  /
+Enter value for empno: 7900
+950
+1010
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> declare
+  2  v_sal emp.sal%type; 
+  3  begin
+  4  select sal into v_sal from emp where empno= '&empno';
+  5  
+  6  dbms_output.put_line(v_sal);
+  7  if v_sal < 2000 then
+  8  v_sal := v_sal+20;  
+  9  end ;
+ 10  v_sal := v_sal + 40;
+ 11  dbms_output.put_line(v_sal);
+ 12  --we are incremen in the programme itself not in the database 
+ 13  end;
+ 14  /
+
+if deptno=10 than hike sal by 10 
+if deptno=20 than hike sal by 20
+if deptno=30 than hike sal by 30  
+any other dept than hike by 50
+
+
+
+
+
+
+declare 
+v_deptno emp.deptno%type;
+v_sal emp.sal%type;
+begin
+select deptno,sal into v_deptno, v_sal from emp where deptno='&deptno';
+
+dbms_output.put_line(v_deptno||'  '||v_sal);
+
+if deptno =10 then
+v_sal := v_sal+10;
+elsif deptno =20 then
+v_sal := v_sal+20
+elsif deptno =30 then
+v_sal := v_sal+ 30
+else
+v_sal := v_sal+40;
+end if;
+
+dbms_output.put_line(v_deptno||'  '||v_sal);
+end;
+
+looping syntax:- 
+simple ,  while , for 
+
+
+SAMPLE PROGRMME FOR THE SIMPLE LOOP
+
+declare 
+x number := 1 ;
+begin
+	loop
+	exit when x>=50;
+	dbms_output.put_line(x);
+	x :=x+2;
+	end loop;
+end;
+
+
+ declare 
+ x number := 0 ;
+ begin
+  loop
+  exit when x=11;
+  dbms_output.put_line(x);
+  x :=x+1;
+  end loop;
+ end;
+ /
+
+
+WHILE LOOP
+declare 
+x number :=1 ;
+begin
+	while x< 11 loop 
+	dbms_output.put_line(x);
+	x:=x+1;
+	end loop ;
+end;
+ 
+
+x mod y,,,,,,
+no need to define the i,,, SYNTAX FOR THE FOR LOOP 
+1) for loop variable we cannot be declare 
+2) can not change the loop value by 4, or for loop variable can not be used as assignment target;
+3) we can not refer the for loop variable outside the target
+	
+declare 
+	x number;
+	begin
+	for i in 1..10 loop 
+	dbms_output.put_line('enter the value ='||'&x');
+	x:=x*i;
+	dbms_output.put_line(x);
+	end loop;
+end;
+  
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+
+
+
+
+TYPE EMP_REC_TYPE IS RECORD (
+
+ V_EMPNO EMP.EMPNO%TYPE,
+ V_ENAME EMP.ENAME%TYPE,
+ V_DEPTNO EMP.DEPTNO%TYPE
+ );
+
+
+declare
+Type emp_rec is record(
+ V_empno emp.empno%type,
+ V_ename emp.ename%type,
+  V_Sal emp.sal%type,
+  V_dname dept.dname%type,	
+ V_deptno emp.deptno%type
+ );
+v_rec  emp_rec;
+begin
+ SELECT E.empno ,E.ename,E.sal,D.dname,E.deptno into V_REC from emp  E join dept D on( E.deptno= D.deptno) AND E.empno = &empno;
+dbms_output.put_line( v_rec.v_empno || ' ' || v_rec.v_ename || ' ' || v_rec.v_sal || ' ' ||v_rec.v_dname || ' ' || v_rec.v_deptno);
+end;
+/
+
+
+

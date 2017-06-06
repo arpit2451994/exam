@@ -1,0 +1,128 @@
+Join
+Pre-defined
+:-
+	Single row 		
+		:- number funtion
+		:- character function 
+		: date func
+		:-converter func
+		:-single-row-function can appear in select list,where clause, START WITH and CONNECT by clause and HAVING clause
+		:- we can not use single row function with order by and from 
+
+	upper:-change form lower to upper
+	LOWER:- all the letter is in the lower case 
+	INITCAP:- first letter is in the capital and the remaining is in the lower case
+	concat:-    select concat(emp, deptno) from emp ;
+		select concat(emp,deptno,job) from emp; wrong this will not possible
+		select concat(concat(emp,deptno),job) from emp; this one is right
+ 
+	substr("string",int fromwhich, int howmuch):-    slect substr('helloworld',1,5) from  dual;
+					   slect substr('helloworld',-5,5) from  dual; -5 indicates that it startfrom the right side
+					  :-dual:- use dual when we dont want to change all the records
+	length:- select ename,lenth(ename) from emp;
+	
+	instr:-instring accept 2 param 1st is string and 2nd is character and and gives the position of that character
+	      :-select ename,instr('helloworld','o') from dual ;
+	
+	LPAD:- it takes 3 param column name , space allocated in left , character you want to store at this place
+  	           SELECT sal , lpad(sal , 10 ,'$') from emp 
+	           to ensure the secret things, over there we can use 
+ 
+	RPAD:- it takes 3 param column name , space allocated in right , character you want to store at this place
+  	           SELECT sal , Rpad(sal , 10 ,'$') from emp;	
+	trim():- remove the corner spaces
+
+	round(123.78)
+
+?	trunc(234.1324,2) output 234.13
+
+?	mod()
+
+	months_between(sysdate,hiredate): select hiredate, sysdate , round(months_between(sysdate,hiredate)) from emp;
+	
+	date always should be in single quote
+	add_month:- select add_months(sysdate,1) from dual; 1 indicates the date after the 1 month
+	next_day():- select next_day(sysdate,'monday') from emp; it will give the date of the next monday 
+	last_day():-  select Last_day(sysdate) from dual; gives the last day of the given date
+	
+	
+	     
+
+	     :- select upper(ename) from emp;
+	     :- acts on single row it self 
+	     :- it gives the multiple outupt not a single output                                                     
+
+ 	user-defined:- oracle identified the common task
+                :- somthing that oracle can not think about
+	:- user defined will make make with the help of PL
+
+
+
+Data conversion function:-
+
+PURGE:- if tyou drop the table it will still reside in the recycle bin when we use the purge;
+	:- to_number
+	:- to_Char :- 
+		   select to_char(sysdate, 'ddspth   month    yyyysp') from dual;  sp stand for spin
+		   select to_char(sysdate, 'dd   month    yyyy') from dual;
+		   select to_char(sysdate, 'dd   month  yyyy HH:MI:SS') from dual 
+	:- to_date :-  
+
+General function:-
+	NVL,NVL2
+	NULLIF= if both argument is same than outpout is the null
+	select comm, NVL(comm,0),NVL2(comm,'nn','NULL') from emp;
+	select nullif(2,10) from dual;
+	select coalesce(NULL,NULL,100,4) from dual;
+
+DECODE Function:-
+
+	what is the difference between case and decode
+	act like if and else condition
+eg:-	select decode, sal, 
+	decode(deptno,10, sal+10,20, sal+20,30, sal+30) AS INC_SAL from emp	
+	
+eg:-	if deptno=10 than sal=sal+10
+ 	
+
+
+	join
+inner join
+outer join (+)
+equi join 
+left outer join 
+right outer join 
+
+self joinL :- we use this to understand the hierarchy of the table
+	eg:- select worker.ename || 'works for' || manager.ename from emp workder , emp manager where worker.mgr = manager.empno;
+
+cross join:-
+	eg:-select * from emp cross join dept;
+
+
+natural join:- checks for names of column in both the tables
+
+t1 c1,c2,c3
+t2 c4,c2,c3
+
+	select * from t1,t2 
+	where t1.c2=t2.c2 and t1.c3=t2.c3
+
+ 	select * from t1 join t2 using (c2);
+	select * FROM EMP join dept (deptno)
+	when you use using than natural join is not supported both are mutually exclusive if you have one than you cant use the 2nd one
+	select * from emp join dept using (EMP.DEPTNO)
+	select * from emp join dept on (emp.deptno=dept.deptno) and emp.sal>2000;
+
+LEFT outer join
+slect * from dept left outer join  emp on 
+(dept.deptno =  emp.deptno);
+
+
+slect * from emp full outer join dept on 
+(dept.deptno =  emp.deptno);
+
+eg:-
+ 	select D.Dname, D.deptno, max(E.sal) from emp E join dept D 
+	on(E.deptno = D.deptno) 
+	group by D.Dname , D.deptno ;

@@ -1,0 +1,432 @@
+				Lesson OBJECTIVE
+
+schema:- collection of database object  own by user, not the collection of the table.
+
+super user :- sys and system user are created automatically, and password is holding by the DB admin. 
+
+DB USER :- Within the schema no 2 name of the object should be the same.
+
+eg:- scott:- t1,p1,v1,v1 wrong
+       admin:-t1,p1,v1
+
+Tables:- 1)
+	system table (data dictionary):- 
+	they belong to the oracle, normal user can not able to manupulate this. 
+	devleper use those table according to the requirement;			
+	for every type of information it store in the below 3 tables only.
+	   user_tables, 
+	 all_tables, 
+	 dba_table
+	 difference between the above 3 tables?
+	 ans:-user_tables:- whoever is the owner and who created all the informatio about the user is store in this
+	       all_user :-access privilage information is availible in the all_tables.
+	       dba_tables:-granted permisson are there. not everybody can logged in this.
+	eg:- user_table al
+             2)user table:- created by database user
+	eg:-	 scott,abc.......
+
+	TABLE RULES or OBJECT RULES:-
+	 1) can not exceed more than 30 char.
+	 2) always start with character.                                                                                                                                                                                                                     
+	 3) 
+	 4) name of the should not be the reserved word
+
+data type:-
+	BLOB:- anything  you can store such as picture ,videos but not the char.
+	Clob:- character large object; 
+	NClob:- national character lob object; for local language store
+	Bfile:- data which store the outside the db, it contains the pointer so that we can go the location and copy this
+
+creating of the tables:-
+	 create table TABLE_NAME
+	(Coulumn1 number,
+	 Coulumn2 varchar2(50),
+
+	 Coulumn3 number,
+	 Coulumn4 varchar(50));
+
+
+Data Integrity :-
+	what is ?
+	constraints?integrity constraints inforced on the column to achieve the data integrity.
+	how you inforce? 
+	Type of Contraints:-	
+		primary key:
+		unique
+		not null
+		check
+		forign key / ref int
+	eg:-
+		
+		***create table emp_unique
+		(empno number(5) constraint empno_u not null,
+		 sal number,
+		 deptno number);
+		insert into emp_unique values;
+
+		insert into emp_unique values(NULL,1000,10);
+
+		since it is not understand the null value so it takes and store, and if again we insert the null value in the unique column than again it accept
+		because oracle is dont knw about value so for prevent this make column as a not null
+
+		****create table emp_nn
+		(empno number(5) constraint empno_nn not null,
+		 sal number,
+		 deptno number);
+
+		insert into emp_nn values(1,1000,10);
+		this time constraint is not null, but not the unique so it will insert the same record infinte number of times
+
+		***create table emp_pk
+		(
+		empno number(5) constraint empno_pk primary key,
+		 sal number,
+		 deptno number);
+		insert into emp_pk values(1,1000,10);
+		insert into emp_pk values(null,1000,10);
+
+           *** if you will not give the name of the constraints than oracle itself give the name of the constraints.
+*** dont push 2 constraints into the single column, it means i2 programme will trigger at the same time and it will increse the execution time
+  *** only one primary key is allow in each table. 
+***however the primary key may be inforced on a single column or more than one column.
+***primary key inforced a unique index created on a column & does not allow creating a unique index by dev on that column.
+***when you make the pK and oracle automatically created the index
+
+2 LEVEL OF DEFINING CONSTRAINTS:-
+		format for the name of the oracle sys
+		1) column level :- 
+
+		2) table level :- ** we can not give the same name constraint , we have to change the name of the constraint.\
+			      ** in the table level constraints we can give the constraints more than one column
+			***create table emp_pk1
+			(empno number(5) ,
+		 	sal number,
+		 	deptno number,
+			constraint empno_pk1 primary key (empno ,deptno)
+			);
+			insert into emp_pk1 values(2,1000,10);
+			insert into emp_pk1 values(1,1000,10);
+
+		CHECK contraints:-
+			create table emp_chk
+			(empno number(5) ,
+		 	sal number constraint sal_chk check(sal>5000),
+		 	deptno number
+			);
+			in this you should have to insert the sal more than 5000 if you will not give than it will not accpeted
+			insert into emp_chk values(2,10000,10);
+
+		MASTER DETAILS/PARENT-CHILD DETAILS
+			master table should be a primary key
+			parent tbale should have the unique column that has no relationship with the any column of the master table
+			
+			create table dept_master
+			( deptno number(4) primary key,
+			  dname varchar2(30),
+			   loc varchar2(30));
+
+			insert into dept_master(select * from dept);
+ 			insert into dept_master values(50,'salesma','usa');
+			
+			create table emp_detail
+			(empno number,
+			 sal number,
+			 deptno number references dept_master(deptno));
+
+			insert into emp_detail values(1,199,60);
+
+			// this record 50 will not going to inser in the emp_detail table because deptno should be referenced from dept_master and 50
+			// is not availible over there
+
+			insert into emp_detail values(1,199,40);
+			insert into emp_detail values(1,199,30);
+			insert into emp_detail values(1,199,20);
+			insert into emp_detail values(1,199,10);
+			delete from dept_master where deptno=10;
+			 not able to deleted this one
+			
+			drop table emp_detail pur.ge;
+			
+			create table emp_detail
+			(empno number,
+			 sal number,
+			 deptno number references dept_master(deptno)
+			  on delete cascade);
+			
+			insert into emp_detail values (1,1000,10);
+			insert into emp_detail values (2,1000,10);
+			insert into emp_detail values (1,1000,20);
+			insert into emp_detail values (1,1000,30);	
+			
+			commit;
+			delete from dept_master where deptno =10;
+	Constraints object:-
+	
+
+
+
+		DDL: create , alter, drop , truncate, rename
+		CREATE:-
+			create table test_ddl (x number(2), y number( 2));
+			rename test_ddl to ddl_test;
+			select * from test_ddl;
+			select * from ddl_test;
+			rename ddl_test to test_ddl;
+		ALTER:- 1)basically used for increse or decrese
+			2)if there is the data in the table than you cant decrese the size 
+			increase / decrease the size of the coloumn
+			alter table test_ddl modify (x number(3));
+			desc test_ddl
+			alter table test_ddl modify (x number(2));
+			desc test_ddl
+			insert into test_ddl values(99,11);
+			alter table test_ddl modify (x number(3));
+			insert into test_ddl values(999,11);	
+			commit;
+			alter table test_ddl modify (x number(2));
+			delete from test_ddl;
+			COMMIT	;
+			alter table test_ddl modify (y varchar2(3));
+
+			ERROR:-column to be modified must be empty to decrease precision or scale
+
+			alter table test_ddl add(z number);   
+
+			alter table test_ddl drop column z;
+
+			desc test_ddl;
+
+			
+
+	ADD A CONSTRAINT, DROP A CONSTRAINT ,  ENABLE , DISABLE
+		
+			BACK_UP table:- create table emp_bk1 as select * from emp ;
+				          create table emp_bk1 as select * from emp  where 1=2;
+				          select * from emp_bk;
+DDL 
+	truncate:-no undo segment is there simply all the data will be remove from there and we cant rollback there;			
+
+DML
+	insert ,delete, update
+	whatever change is there is go to the undo segment; 
+	so we can rollback the manupulated data;
+	commit :- whatever changes is there i made,it is fixed and also deleted from the undo segment;
+	delete from emp where deptno =10;
+TCL
+	commit and rollback;
+	data segemnt        undo segment or rollback segment	index segment;
+
+	high water mark:- at which point you use the memory
+	when we delete than high water mark increses
+	when we truncate than high water mark willl be empty 
+	
+
+dept:- insert into dept values (50,'1111',uuu);
+	implicit null 
+	explicit null insertion
+         insert into dept (deptno,dname) values(60,'1111');
+	insert into dept (deptno,dname) values(60,'1111',null);
+	select * from dept; 
+	update dept set loc='banglore' where deptno =70;
+
+
+TCL( transcation control language):-
+	transaction: a single unit of work, logical unit of work comprising of 1 or more dml statement. till commit 1 transaction will complete;
+	commit
+	rollback
+	savepoint:-
+		savepoint can be the part of the transaction;
+how savepoint work below:;---
+
+SQL> savepoint s1;
+
+Savepoint created.
+
+SQL> delete from emp where deptno=10;
+
+3 rows deleted.
+
+SQL> savepoint s2;
+
+Savepoint created.
+
+SQL> delete from emp where deptno =20;
+
+5 rows deleted.
+
+SQL> savepoint s3;
+
+Savepoint created.
+
+SQL> delete from emp where deptno=30;
+
+6 rows deleted.
+
+SQL> savepoint s4;
+
+Savepoint created.
+
+SQL> delete from emp where deptno= 40;
+
+0 rows deleted.
+
+SQL> select * from emp; 
+
+no rows selected
+
+SQL> rollback to s4;
+
+Rollback complete.
+
+SQL> select * from emp;
+
+no rows selected
+
+SQL> rollback to s3;
+
+Rollback complete.
+
+SQL> select * from emp;
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------
+      7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300         30
+      7521 WARD       SALESMAN        7698 22-FEB-81       1250        500         30
+      7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400         30
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0         30
+      7900 JAMES      CLERK           7698 03-DEC-81        950                    30
+
+6 rows selected.
+
+SQL> rollback to s2;
+
+Rollback complete.
+
+SQL> select * from emp; 
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------
+      7369 SMITH      CLERK           7902 17-DEC-80        800                    20
+      7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300         30
+      7521 WARD       SALESMAN        7698 22-FEB-81       1250        500         30
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20
+      7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400         30
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30
+      7788 SCOTT      ANALYST         7566 09-DEC-82       3000                    20
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0         30
+      7876 ADAMS      CLERK           7788 12-JAN-83       1100                    20
+      7900 JAMES      CLERK           7698 03-DEC-81        950                    30
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                    20
+
+11 rows selected.
+
+SQL> rollback to s1;
+
+Rollback complete.
+
+SQL> select * from emp; 
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------
+      7369 SMITH      CLERK           7902 17-DEC-80        800                    20
+      7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300         30
+      7521 WARD       SALESMAN        7698 22-FEB-81       1250        500         30
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20
+      7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400         30
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30
+      7782 CLARK      MANAGER         7839 09-JUN-81       2450                    10
+      7788 SCOTT      ANALYST         7566 09-DEC-82       3000                    20
+      7839 KING       PRESIDENT            17-NOV-81       5000                    10
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0         30
+      7876 ADAMS      CLERK           7788 12-JAN-83       1100                    20
+      7900 JAMES      CLERK           7698 03-DEC-81        950                    30
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                    20
+      7934 MILLER     CLERK           7782 23-JAN-82       1300                    10
+
+14 rows selected.
+
+
+
+
+Insert into dept values (&deptno , '&dname' , '&loc');
+enter the value in place of deptno and dname ,loc     
+
+
+
+SEQUENCE:- it is the database object same as the table;
+	       automatically got the sequence generated
+	       sequence is used to fill the coloumn that is generated as the primary key or unique
+	       pseudo columns:-
+	       currval, nextval
+	       create sequence s1;
+	       select s1.nextval from dual;
+	       run this 10 times 
+	       drop sequence s1;
+	       create sequence s1;
+	       select s1.currval from dual; 
+	       not working the above values
+	        insert into dept values (s1.nextval,....);
+	        select * from dept ;
+	        rollback;
+
+		option: we can give the minvalue and maxvalue of the sequence by using minvalue and maxvalue options
+		minvalue   maxvalue	startwith increment by ,cycle
+	                drop sequence s1;
+		create sequence s1 minvalue 1 maxvalue 10;
+		select s1.nextval from dual;
+		create sequence s1 minvalue 1 maxvalue 100 start with 5 increment by 5;
+		
+		create sequence s1 minvalue 1 maxvalue 10 cache 5 cycle ; 	this is for the faster execution
+
+
+SYNONYM:-
+	create synonym emp_new for emp;
+	
+	select * from emp_new;
+	select * from emp;
+
+what is the differnce beetween table alias and a synonyms
+select * from emp e ,dept d
+create synonym e for emp;
+
+
+
+VIEWS
+virtual tables,view can be created on multiple table, all the tbale in the data dictionary is the view not the table;
+	we can create view as per the need
+view can be created on the table or on another view
+create view v10 as select * from emp where deptno =10;
+create view v20 as select * from emp where deptno =20;
+create view v30 as select * from emp where deptno =30;
+select * from v10; 
+select * from v20;
+select * from v30;
+
+insert into v30 (empno,deptno) values (1234,10); cant possible 
+so do one thing 
+drop view v30;
+create view v30 as select * from emp where deptno =30 with check option;
+
+INSERT INTO V30(EMPNO,deptno) values(1235,10);
+
+create view v30 as select * from emp where deptno =30 with read only;
+ 
+INSERT INTO V30(EMPNO,deptno) values(1235,10);
+in this you can't able to insert the new record
+
++view on the multiple table
+drop view emp_dept;
+create view emp_dept as 
+select e.empno,e.ename,d.deptno,d.dname,d.loc
+from emp e join dept d on (e.deptno =  d.deptno); 
+
+
+simple views: 
+	based on the single tableo
+	DML on simple view
+	no grouping or no aggregations
+complex view:
+	created on one or more table
+	NO DML
+	can have aggregation and group functions 	

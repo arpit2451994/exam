@@ -1,0 +1,275 @@
+PROCEDURE
+
+
+
+create or replace procedure update_sal (p_ename emp.ename%type) is 
+begin
+update emp set sal=sal+1 where ename = p_ename;
+commit;
+end update_sal;
+
+
+procedure can be called in another programme
+create or replace procedure update _sal (p_ename emp.ename%type, P_SAL number) is 
+begin
+update emp set sal=P_SAL where ename = p_ename;
+commit;
+end update_sal;
+
+
+create table emp_bk as select * from emp;
+delete a record
+create or replace procedure delete_empno (p_empno emp.empno%type) is 
+begin
+delete from emp where empno=p_empno;
+commit;
+
+end delete_empno;
+
+QA) getting salary on the basis of ename
+
+create or replace procedure  GET_SAL (p_ename IN emp.ename%type , p_sal OUT emp.sal%type) is 
+begin
+select sal INTO p_sal from  emp  where ename=p_ename ;
+commit;
+end;
+
+Exception 
+when no_data_found then 
+dbms_output.put_line('no such data');
+end GET_SAL;
+
+declare 
+x number;
+begin
+ GET_SAL('MILLER', x);
+dbms_output.put_line(x);
+end;
+/
+
+
+
+
+create or replace FUNCTION GET_ANL_SAL(p_ename  emp.ename%type)  RETURN NUMBER is 
+V_ANL_SAL  emp.sal%type;
+begin
+select sal*12 INTO V_ANL_SAL from emp where ename=p_ename;
+RETURN V_ANL_SAL;
+end GET_ANL_SAL;
+
+
+begin
+ 
+-- it will fo back to cursor defination and identified the record which has to process,this record set called active set.
+-- for loop cursor declare,open and fetch implicitely
+
+for i in (SELECT GET_ANL_SAL ('MILLER') FROM DUAL) loop
+-- it will fetch all the infomation in  i itself
+
+dbms_output.put_line(i.ename || ' '  ||i.sal||' ' || i.job || ' ' || i.deptno || ' ' || i.dname);
+end loop;
+
+close c1;
+end;
+
+
+DECLARE 
+CURSOR C1 SELECT GET_ANL_SAL ('MILLER') FROM DUAL;
+v_rec c1%rowtype;
+begin
+OPEN C1;
+loop
+fetch c1 into v_rec;
+exit when c1%notfound ;
+dbms_output.put_line(v_rec.sal);
+end loop ;
+close c1;
+
+end;
+
+
+******have to make the explicit cursor for this*******
+
+declare 
+x number;
+begin
+x:=GET_ANL_SAL('ADAMS');
+dbms_output.put_line(x);
+end;
+
+
+
+
+				    ****PACKAGE*****
+
+create or replace package MY_PACK is
+function add_num(x number,  y number) return number;
+function aos(s number) return number; 
+procedure del_rec(p_ename emp.ename%type);
+end MY_PACK;
+/
+
+create or replace package BODY MY_PACK is
+
+function add_num(x number,  y number) return number IS
+xy number;
+begin
+xy :=x+y;
+return xy;
+end add num;
+
+function aos(s number) return number IS 
+v_aos number;
+begin 
+v_aos :=s*s;
+return v_aos;
+end aos;
+
+ 
+procedure del_rec(p_ename emp.ename%type) IS
+begin 
+delete from emp where ename = p_ename;
+commit;
+end del_rec;
+
+end MY_PACK;
+/
+
+
+
+WAP ---
+Area of trangle 
+aera of circle
+
+                                                                                                                                                                                                          
+                                                                                                                                                                                                                  
+                                                                                                                                                                                                                   
+                                                                                                                                                                                                                       
+                                                                                                                                                                                                                  
+                                                                                                                                                                                                               
+                                                                                                                                                                                                                      
+
+create or replace package MY_PACK1 is
+function AOT_num(l number,  b number) return number;
+function AOC(r number) return number; 
+procedure ins_rec( p_empno emp.empno%type, p_ename emp.ename%type, 
+p_job emp.job%type p_mgr emp.job%type, p_hiredate emp.hiredate%type, p_sal emp.sal%type,
+ p_comm emp.comm%type, p_deptno emp.deptno%type);
+end MY_PACK;
+
+
+create or replace package MY_PACK1 BODY is
+function AOT_num(h number,  b number) return number is 
+v_AOT number;
+begin 
+v_AOT := 1/2 * h * b;
+return v_AOT;
+end AOT_num;
+
+function AOC(r number) return number is 
+v_AOC number;
+begin 
+v_AOC := 3.14*r*r;
+return v_AOC;
+end AOC;
+
+procedure ins_rec(p_ename emp.ename%type) is 
+begin 
+insert into emp values( p_empno, p_ename , p_job, p_mgr , p_hiredate , p_sal,p_comm , p_deptno);
+commit;
+end ins_rec;
+
+end MY_PACK1 ;
+
+
+end MY_PACK;
+
+		****** DATABASE TRIGGER******
+
+
+
+1) Database trigger :- writes and save in the db and automatically get executed as per the requirement;
+2) application trigger
+
+database trigger 
+1) DML trigger 
+2) DDL trigger
+
+create or replace trigger emp_trig 
+before update on emp 
+begin
+dbms_output.put_line("emp table has updated"); 
+end emp_trig; 
+
+
+
+create or replace trigger emp_trig1 
+after update  or delete or insert on emp
+begin
+dbms_output.put_line("emp1 table has updated"); 
+end emp_trig1; 
+
+
+
+create or replace trigger emp_trig1 
+after update or delete or insert on emp
+begin
+if inserting then
+dbms_output.put_line('emp1 table has updated'); 
+end if;
+if deleting then
+dbms_output.put_line('emp1 table has updated'); 
+end if;
+if updating then
+dbms_output.put_line('emp1 table has updated'); 
+end if;
+end emp_trig1;
+
+
+
+create or replace trigger secure_emp
+before insert or update or delete on emp 
+begin 
+if (to_char(sysdate,'DY') IN ('SAT','SUN')) then 
+raise_application_error (-20500, 'dml not allowed on holidays');
+end if ;
+end;
+
+
+
+create or replace trigger row_level_trig
+after update on emp for each row 
+begin 
+dbms_output.put_line('each row updation'); --see in the dbms output only
+end;
+
+
+create table trigger _log
+(x number , y varchar2(30), z date);
+
+drop sequence s1;
+create sequence s1;
+
+
+create or replace trigger und_at
+after update or delete or insert one emp  
+begin 
+insert into dml_log values (s1.nextval, 'emp modified', ' sysdate');
+commit;
+end;
+
+create or replace procedure at_proc is 
+                                
+
+create or replace trigger und_at
+after update or delete or insert on emp
+begin 
+at_proc;
+end;
+
+************************LOCK***********************
+
+
+Deadlock:
+
+
